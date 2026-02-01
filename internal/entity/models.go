@@ -6,6 +6,7 @@ import (
 
 // Enums kita handle sebagai string constant atau type validation di service level
 type Role string
+
 const (
 	RoleStudent    Role = "STUDENT"
 	RoleInstructor Role = "INSTRUCTOR"
@@ -13,6 +14,7 @@ const (
 )
 
 type BadgeType string
+
 const (
 	BadgeBeginner     BadgeType = "BEGINNER"
 	BadgeIntermediate BadgeType = "INTERMEDIATE"
@@ -37,8 +39,8 @@ type User struct {
 	UpdatedAt         time.Time `json:"updatedAt"`
 
 	// Relations
-	EnrolledCourses []UserCourse  `gorm:"foreignKey:UserID" json:"enrolledCourses,omitempty"`
-	UserBadges      []UserBadge   `gorm:"foreignKey:UserID" json:"userBadges,omitempty"`
+	EnrolledCourses []UserCourse `gorm:"foreignKey:UserID" json:"enrolledCourses,omitempty"`
+	UserBadges      []UserBadge  `gorm:"foreignKey:UserID" json:"userBadges,omitempty"`
 }
 
 // --- COURSE DOMAIN ---
@@ -106,9 +108,9 @@ type UserCourse struct {
 	Progress       int       `gorm:"default:0" json:"progress"`
 	CurrentChapter int       `gorm:"default:1" json:"currentChapter"`
 	IsCompleted    bool      `gorm:"default:false" json:"isCompleted"`
-	TimeStarted    time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"timeStarted"`
+	TimeStarted    time.Time `gorm:"autoCreateTime" json:"timeStarted"`
 	TimeFinished   time.Time `json:"timeFinished"`
-	EnrolledAt     time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"enrolledAt"`
+	EnrolledAt     time.Time `gorm:"autoCreateTime" json:"enrolledAt"`
 
 	Course Course `gorm:"foreignKey:CourseID" json:"course"`
 }
@@ -148,7 +150,7 @@ type UserBadge struct {
 	UserID      int       `json:"userId"`
 	BadgeID     int       `json:"badgeId"`
 	IsPurchased bool      `gorm:"default:false" json:"isPurchased"`
-	AwardedAt   time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"awardedAt"`
+	AwardedAt   time.Time `gorm:"autoCreateTime" json:"awardedAt"`
 
 	Badge Badge `gorm:"foreignKey:BadgeID" json:"badge"`
 }
@@ -167,5 +169,5 @@ type UserTrade struct {
 	ID          int       `gorm:"primaryKey;autoIncrement" json:"id"`
 	UserID      int       `json:"userId"`
 	TradeID     int       `json:"tradeId"`
-	PurchasedAt time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"purchasedAt"`
+	PurchasedAt time.Time `gorm:"autoCreateTime" json:"purchasedAt"`
 }
