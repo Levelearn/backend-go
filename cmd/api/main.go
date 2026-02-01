@@ -3,6 +3,7 @@ package main
 import (
 	"levelearn-backend/config"
 	"levelearn-backend/internal/handler"
+	"levelearn-backend/internal/middleware"
 	"levelearn-backend/internal/repository"
 	"levelearn-backend/internal/service"
 
@@ -14,19 +15,37 @@ func main() {
 
 	config.RunMigration(db)
 
+	// Repo
 	courseRepo := repository.NewCourseRepository(db)
+	userRepo := repository.NewUserRepository(db)
+
+	// Service
+	authService := service.NewAuthService(userRepo)
 	courseService := service.NewCourseService(courseRepo)
+
+	// Handler
+	authHandler := handler.NewAuthHandler(authService)
 	courseHandler := handler.NewCourseHandler(courseService)
 
 	r := gin.Default()
 
 	api := r.Group("/api/v1")
 	{
-		courses := api.Group("/courses")
+		auth := api.Group("/auth")
 		{
-			courses.GET("/", courseHandler.GetAll)
-			courses.GET("/:id", courseHandler.GetByID)
-			courses.POST("/", courseHandler.Create)
+			auth.POST("/register", authHandler.Register)
+			auth.POST("/login", authHandler.Login)
+		}
+
+		protected := api.Group("/")
+		protected.Use(middleware.JWTAuth())
+		{
+			courses := protected.Group("/courses")
+			{
+				courses.GET("/", courseHandler.GetAll)
+				courses.GET("/:id", courseHandler.GetByID)
+				courses.POST("/", courseHandler.Create)
+			}
 		}
 	}
 
