@@ -12,7 +12,7 @@ type Chapter struct {
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
 
-	Materials   []Material   `gorm:"foreignKey:ChapterID" json:"materials,omitempty"`
-	Assessments []Assessment `gorm:"foreignKey:ChapterID" json:"assessments,omitempty"`
-	Assignments []Assignment `gorm:"foreignKey:ChapterID" json:"assignments,omitempty"`
+	Material   *Material   `gorm:"constraint:OnUpdate:CASCADE" json:"material,omitempty"`
+	Assessment *Assessment `gorm:"constraint:OnUpdate:CASCADE" json:"assessment,omitempty"`
+	Assignment *Assignment `gorm:"constraint:OnUpdate:CASCADE" json:"assignment,omitempty"`
 }

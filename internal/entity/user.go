@@ -9,12 +9,12 @@ type User struct {
 	Name              string    `gorm:"not null" json:"name"`
 	Role              Role      `gorm:"type:enum('STUDENT','INSTRUCTOR','ADMIN');default:'STUDENT'" json:"role"`
 	StudentID         *string   `json:"studentId"` // Pointer allow null
+	InstructorID      *string   `json:"instructorId"`
+	Image             string    `gorm:"default:''" json:"image"`
 	Points            int       `gorm:"default:0" json:"points"`
 	TotalCourses      int       `gorm:"default:0" json:"totalCourses"`
 	BadgesCount       int       `gorm:"column:badges;default:0" json:"badgesCount"` // Renamed field to avoid clash with Relation
-	InstructorID      *string   `json:"instructorId"`
 	InstructorCourses int       `json:"instructorCourses"`
-	Image             string    `gorm:"default:''" json:"image"`
 	CreatedAt         time.Time `json:"createdAt"`
 	UpdatedAt         time.Time `json:"updatedAt"`
 

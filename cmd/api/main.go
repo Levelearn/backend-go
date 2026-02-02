@@ -22,10 +22,12 @@ func main() {
 	// Service
 	authService := service.NewAuthService(userRepo)
 	courseService := service.NewCourseService(courseRepo)
+	userService := service.NewUserService(userRepo)
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authService)
 	courseHandler := handler.NewCourseHandler(courseService)
+	userHandler := handler.NewUserHandler(userService)
 
 	r := gin.Default()
 
@@ -45,6 +47,13 @@ func main() {
 				courses.GET("/", courseHandler.GetAll)
 				courses.GET("/:id", courseHandler.GetByID)
 				courses.POST("/", courseHandler.Create)
+			}
+
+			users := protected.Group("/users")
+			{
+				users.GET("/me", userHandler.GetMe)
+				users.PUT("/me", userHandler.UpdateMe)
+				users.GET("/:id", userHandler.GetById)
 			}
 		}
 	}

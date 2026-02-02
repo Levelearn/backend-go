@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"levelearn-backend/internal/utils"
 	"net/http"
 	"os"
 	"strings"
@@ -17,10 +18,12 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
-		tokenString := strings.Replace(auth, "Bearer ", "", 1)
+		tokenString := strings.TrimPrefix(auth, "Bearer ")
 		secret := []byte(os.Getenv("JWT_SECRET"))
 
-		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		claims := &utils.JWTClaims{}
+
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
 			return secret, nil
 		})
 
@@ -28,6 +31,9 @@ func JWTAuth() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 			return
 		}
+
+		c.Set("userId", claims.UserID)
+		c.Set("role", claims.Role)
 
 		c.Next()
 	}
