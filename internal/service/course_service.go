@@ -6,9 +6,11 @@ import (
 )
 
 type CourseService interface {
-	GetAllCourses() ([]entity.Course, error)
-	GetCourseByID(id int) (entity.Course, error)
-	CreateCourse(input entity.Course) (entity.Course, error)
+	FindAll() ([]entity.Course, error)
+	FindById(id int) (*entity.Course, error)
+	Create(course *entity.Course) error
+	Update(id int, name, description, image *string) error
+	Delete(id int) error
 }
 
 type courseService struct {
@@ -19,18 +21,40 @@ func NewCourseService(repo repository.CourseRepository) CourseService {
 	return &courseService{repo}
 }
 
-func (s *courseService) GetAllCourses() ([]entity.Course, error) {
+func (s *courseService) FindAll() ([]entity.Course, error) {
 	return s.repo.FindAll()
 }
 
-func (s *courseService) GetCourseByID(id int) (entity.Course, error) {
-	return s.repo.FindByID(id)
+func (s *courseService) FindById(id int) (*entity.Course, error) {
+	return s.repo.FindById(id)
 }
 
-func (s *courseService) CreateCourse(input entity.Course) (entity.Course, error) {
-	// Contoh Business Logic: Validasi code tidak boleh kosong
-	if input.Code == "" {
-		// return empty dan error custom
+func (s *courseService) Create(course *entity.Course) error {
+	return s.repo.Create(course)
+}
+
+func (s *courseService) Update(id int, name, description, image *string) error {
+	data := map[string]interface{}{}
+
+	if name != nil {
+		data["name"] = *name
 	}
-	return s.repo.Create(input)
+
+	if description != nil {
+		data["description"] = *description
+	}
+
+	if image != nil {
+		data["image"] = *image
+	}
+
+	if len(data) == 0 {
+		return nil
+	}
+
+	return s.repo.Update(id, data)
+}
+
+func (s *courseService) Delete(id int) error {
+	return s.repo.Delete(id)
 }

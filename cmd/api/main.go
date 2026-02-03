@@ -42,18 +42,20 @@ func main() {
 		protected := api.Group("/")
 		protected.Use(middleware.JWTAuth())
 		{
-			courses := protected.Group("/courses")
-			{
-				courses.GET("/", courseHandler.GetAll)
-				courses.GET("/:id", courseHandler.GetByID)
-				courses.POST("/", courseHandler.Create)
-			}
-
 			users := protected.Group("/users")
 			{
 				users.GET("/me", userHandler.GetMe)
 				users.PUT("/me", userHandler.UpdateMe)
 				users.GET("/:id", userHandler.GetById)
+			}
+
+			courses := protected.Group("/courses")
+			{
+				courses.GET("", courseHandler.FindAll)
+				courses.GET("/:id", courseHandler.FindById)
+				courses.POST("", courseHandler.Create)
+				courses.PUT("/:id", courseHandler.Update)
+				courses.DELETE("/:id", courseHandler.Delete)
 			}
 		}
 	}
