@@ -18,16 +18,19 @@ func main() {
 	// Repo
 	courseRepo := repository.NewCourseRepository(db)
 	userRepo := repository.NewUserRepository(db)
+	chapterRepo := repository.NewChapterRepository(db)
 
 	// Service
 	authService := service.NewAuthService(userRepo)
 	courseService := service.NewCourseService(courseRepo)
 	userService := service.NewUserService(userRepo)
+	chapterService := service.NewChapterService(chapterRepo, courseRepo)
 
 	// Handler
 	authHandler := handler.NewAuthHandler(authService)
 	courseHandler := handler.NewCourseHandler(courseService)
 	userHandler := handler.NewUserHandler(userService)
+	chapterHandler := handler.NewChapterHandler(chapterService)
 
 	r := gin.Default()
 
@@ -56,6 +59,15 @@ func main() {
 				courses.POST("", courseHandler.Create)
 				courses.PUT("/:id", courseHandler.Update)
 				courses.DELETE("/:id", courseHandler.Delete)
+			}
+
+			chapters := protected.Group("/chapters")
+			{
+				chapters.GET("", chapterHandler.FindAll)
+				chapters.GET("/:id", chapterHandler.FindById)
+				chapters.POST("", chapterHandler.Create)
+				chapters.POST("/:id", chapterHandler.Update)
+				chapters.POST("/:id", chapterHandler.Delete)
 			}
 		}
 	}
