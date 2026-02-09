@@ -58,6 +58,7 @@ func (h *CourseHandler) Update(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
 	var req struct {
+		Code        *string `json:"code,omitempty"`
 		Name        *string `json:"name,omitempty"`
 		Description *string `json:"description,omitempty"`
 		Image       *string `json:"image,omitempty"`
@@ -68,7 +69,7 @@ func (h *CourseHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.Update(id, req.Name, req.Description, req.Image); err != nil {
+	if err := h.service.Update(id, req.Code, req.Name, req.Description, req.Image); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

@@ -9,7 +9,7 @@ type CourseService interface {
 	FindAll() ([]entity.Course, error)
 	FindById(id int) (*entity.Course, error)
 	Create(course *entity.Course) error
-	Update(id int, name, description, image *string) error
+	Update(id int, code, name, description, image *string) error
 	Delete(id int) error
 }
 
@@ -33,8 +33,12 @@ func (s *courseService) Create(course *entity.Course) error {
 	return s.repo.Create(course)
 }
 
-func (s *courseService) Update(id int, name, description, image *string) error {
-	data := map[string]interface{}{}
+func (s *courseService) Update(id int, code, name, description, image *string) error {
+	data := map[string]any{}
+
+	if code != nil {
+		data["code"] = *code
+	}
 
 	if name != nil {
 		data["name"] = *name
